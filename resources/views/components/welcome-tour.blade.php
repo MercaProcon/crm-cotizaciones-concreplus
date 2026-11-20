@@ -128,14 +128,15 @@
             @foreach ($steps as $i => $step)
                 <div
                     class="welcome-tour-step absolute inset-0"
+                    :class="step === {{ $i }} ? 'z-10' : 'z-0'"
                     x-show="step === {{ $i }}"
                     x-cloak
                     x-transition:enter="transition ease-[cubic-bezier(0.77,0,0.175,1)] duration-[220ms]"
                     x-transition:enter-start="opacity-0 translate-x-3"
                     x-transition:enter-end="opacity-100 translate-x-0"
-                    x-transition:leave="transition ease-[cubic-bezier(0.77,0,0.175,1)] duration-[160ms]"
-                    x-transition:leave-start="opacity-100 translate-x-0"
-                    x-transition:leave-end="opacity-0 -translate-x-3"
+                    x-transition:leave="transition ease-[cubic-bezier(0.23,1,0.32,1)] duration-[90ms]"
+                    x-transition:leave-start="opacity-100"
+                    x-transition:leave-end="opacity-0"
                 >
                     <div
                         class="welcome-tour-icon mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-procon-light"
