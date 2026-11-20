@@ -35,11 +35,10 @@ Schedule::command('quotations:send-reminders')
     ->withoutOverlapping()
     ->appendOutputTo(storage_path('logs/reminders-concreplus.log'));
 
-// reports:send-weekly-commercial: reporte semanal, explícitamente pospuesto
-// ("no activar reportes semanales todavía"). Reactivar cuando se autorice
-// explícitamente, no antes.
-//
-// Schedule::command('reports:send-weekly-commercial')
-//     ->weeklyOn(1, '08:00')
-//     ->withoutOverlapping()
-//     ->appendOutputTo(storage_path('logs/weekly-commercial-report.log'));
+// Fase 15: reporte semanal comercial activado. Por defecto reporta la
+// semana pasada (lunes-domingo) y no reenvia un periodo ya enviado salvo
+// --force, asi que no hay riesgo de backlog al activarlo.
+Schedule::command('reports:send-weekly-commercial')
+    ->weeklyOn(1, '08:00')
+    ->withoutOverlapping()
+    ->appendOutputTo(storage_path('logs/weekly-commercial-report.log'));
