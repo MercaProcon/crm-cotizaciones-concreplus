@@ -124,10 +124,10 @@
     >
         <img src="{{ asset('images/concreplus-logo.png') }}" alt="Concreplus" class="h-7 mx-auto mb-6">
 
-        <div class="min-h-[160px] overflow-hidden">
+        <div class="relative min-h-[160px] overflow-hidden">
             @foreach ($steps as $i => $step)
                 <div
-                    class="welcome-tour-step"
+                    class="welcome-tour-step absolute inset-0"
                     x-show="step === {{ $i }}"
                     x-cloak
                     x-transition:enter="transition ease-[cubic-bezier(0.77,0,0.175,1)] duration-[220ms]"
