@@ -55,12 +55,6 @@
                         </x-nav-link>
                     @endcan
 
-                    @canany(['facades.view', 'facades.view.all'])
-                        <x-nav-link :href="route('facades.index')" :active="request()->routeIs('facades.*')">
-                            {{ __('Fachadas') }}
-                        </x-nav-link>
-                    @endcanany
-
                     @can('users.manage')
                         <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
                             {{ __('Usuarios') }}
@@ -196,12 +190,6 @@
                     {{ __('Reportes') }}
                 </x-responsive-nav-link>
             @endcan
-
-            @canany(['facades.view', 'facades.view.all'])
-                <x-responsive-nav-link :href="route('facades.index')" :active="request()->routeIs('facades.*')">
-                    {{ __('Fachadas') }}
-                </x-responsive-nav-link>
-            @endcanany
 
             @can('users.manage')
                 <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
