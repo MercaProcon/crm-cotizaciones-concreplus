@@ -35,4 +35,8 @@ return [
         ],
     ],
 
+    'healthchecks' => [
+        'sheets_import_url' => env('HEALTHCHECKS_SHEETS_IMPORT_URL'),
+    ],
+
 ];

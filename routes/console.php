@@ -13,10 +13,18 @@ Artisan::command('inspire', function () {
 // intenta autoasignar a la vendedora de CRM_DEFAULT_VENDEDORA_EMAIL (ver
 // AssignmentService::autoAssignToDefaultVendor()). Log propio, separado del
 // de PROCON.
-Schedule::command('sheets:import --tab=Cotizaciones')
+$sheetsImport = Schedule::command('sheets:import --tab=Cotizaciones')
     ->everyFiveMinutes()
     ->withoutOverlapping()
     ->appendOutputTo(storage_path('logs/sheets-import-concreplus.log'));
+
+// Fase 15: heartbeat externo (healthchecks.io). Si el cron deja de correr
+// por completo -- el fallo real que tuvimos, 17 dias en silencio -- el
+// servicio avisa por correo sin depender de que Hostinger detecte nada.
+// Si la URL no esta configurada (ej. en local), simplemente no se registra.
+if ($healthcheckUrl = config('services.healthchecks.sheets_import_url')) {
+    $sheetsImport->pingOnSuccess($healthcheckUrl);
+}
 
 // Heredados de PROCON, deliberadamente INACTIVOS por ahora (Fase 8 solo
 // autorizó el importador):
