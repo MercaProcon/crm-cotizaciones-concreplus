@@ -88,14 +88,59 @@
     $steps = $roleSteps[$roleKey];
 @endphp
 
+{{--
+    Animacion: entrada del modal queda con la curva propia de <x-modal> (es
+    compartido con el resto del CRM, no se toca aqui). Lo que sí es nuevo:
+    - Paso a paso desliza horizontalmente (no solo opacity) y con sentido
+      consistente de avance (entra desde la derecha, sale por la izquierda),
+      ease-in-out fuerte, 220ms.
+    - El icono de cada paso aparece con un "pop" (scale 0.5->1 + opacity),
+      ease-out fuerte, 320ms, atado al mismo "step" que dispara el slide.
+    - Los puntos de progreso ya tenian transition-all; se deja explicito
+      (ease, 150ms) por ser cambio de color/ancho, no entrada/salida.
+    - Botones con active:scale-95 (feedback de press), 100ms.
+    - Cierre instantaneo via fetch en vez de submit de formulario (antes
+      recargaba toda la pagina).
+--}}
 <x-modal name="welcome-tour" :show="true" maxWidth="sm">
-    <div x-data="{ step: 0, total: {{ count($steps) }} }" class="p-8 text-center">
+    <div
+        x-data="{
+            step: 0,
+            total: {{ count($steps) }},
+            dismissing: false,
+            dismiss() {
+                if (this.dismissing) return;
+                this.dismissing = true;
+                fetch('{{ route('welcome-tour.complete') }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                        'Accept': 'application/json',
+                    },
+                }).finally(() => window.dispatchEvent(new CustomEvent('close-modal', { detail: 'welcome-tour' })));
+            },
+        }"
+        class="p-8 text-center"
+    >
         <img src="{{ asset('images/concreplus-logo.png') }}" alt="Concreplus" class="h-7 mx-auto mb-6">
 
-        <div class="min-h-[160px]">
+        <div class="min-h-[160px] overflow-hidden">
             @foreach ($steps as $i => $step)
-                <div x-show="step === {{ $i }}" x-transition.opacity.duration.200ms x-cloak>
-                    <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-procon-light">
+                <div
+                    class="welcome-tour-step"
+                    x-show="step === {{ $i }}"
+                    x-cloak
+                    x-transition:enter="transition ease-[cubic-bezier(0.77,0,0.175,1)] duration-[220ms]"
+                    x-transition:enter-start="opacity-0 translate-x-3"
+                    x-transition:enter-end="opacity-100 translate-x-0"
+                    x-transition:leave="transition ease-[cubic-bezier(0.77,0,0.175,1)] duration-[160ms]"
+                    x-transition:leave-start="opacity-100 translate-x-0"
+                    x-transition:leave-end="opacity-0 -translate-x-3"
+                >
+                    <div
+                        class="welcome-tour-icon mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-procon-light transition-[transform,opacity] duration-[320ms] ease-[cubic-bezier(0.23,1,0.32,1)]"
+                        :class="step === {{ $i }} ? 'scale-100 opacity-100' : 'scale-50 opacity-0'"
+                    >
                         <svg class="h-8 w-8 text-procon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             {!! $icons[$step['icon']] !!}
                         </svg>
@@ -112,7 +157,7 @@
 
         <div class="flex items-center justify-center gap-1.5 mt-6 mb-5">
             @foreach ($steps as $i => $step)
-                <span class="h-1.5 rounded-full transition-all"
+                <span class="h-1.5 rounded-full transition-all duration-150 ease-in-out"
                       :class="step === {{ $i }} ? 'w-5 bg-procon' : 'w-1.5 bg-gray-200'"></span>
             @endforeach
         </div>
@@ -122,7 +167,7 @@
                     x-show="step > 0"
                     x-on:click="step--"
                     x-cloak
-                    class="text-sm text-gray-500 hover:text-gray-700">
+                    class="text-sm text-gray-500 transition-transform duration-100 active:scale-95 hover:text-gray-700">
                 {{ __('Atrás') }}
             </button>
             <span x-show="step === 0" class="text-sm text-transparent select-none">{{ __('Atrás') }}</span>
@@ -130,16 +175,18 @@
             <button type="button"
                     x-show="step < total - 1"
                     x-on:click="step++"
-                    class="inline-flex items-center gap-1 rounded-md bg-procon px-4 py-2 text-sm font-semibold text-white hover:bg-procon-dark">
+                    class="inline-flex items-center gap-1 rounded-md bg-procon px-4 py-2 text-sm font-semibold text-white transition-transform duration-100 active:scale-95 hover:bg-procon-dark">
                 {{ __('Siguiente') }}
             </button>
 
-            <form method="POST" action="{{ route('welcome-tour.complete') }}" x-show="step === total - 1" x-cloak>
-                @csrf
-                <button type="submit" class="inline-flex items-center gap-1 rounded-md bg-procon px-4 py-2 text-sm font-semibold text-white hover:bg-procon-dark">
-                    {{ __('Entendido, comenzar') }}
-                </button>
-            </form>
+            <button type="button"
+                    x-show="step === total - 1"
+                    x-cloak
+                    x-on:click="dismiss()"
+                    :disabled="dismissing"
+                    class="inline-flex items-center gap-1 rounded-md bg-procon px-4 py-2 text-sm font-semibold text-white transition-transform duration-100 active:scale-95 hover:bg-procon-dark disabled:opacity-70">
+                {{ __('Entendido, comenzar') }}
+            </button>
         </div>
     </div>
 </x-modal>

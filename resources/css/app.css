@@ -5,3 +5,14 @@
 [x-cloak] {
     display: none !important;
 }
+
+@media (prefers-reduced-motion: reduce) {
+    .welcome-tour-step {
+        transform: none !important;
+    }
+
+    .welcome-tour-icon {
+        transform: none !important;
+        transition-property: opacity;
+    }
+}
