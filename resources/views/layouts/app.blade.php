@@ -20,6 +20,10 @@
         <div class="min-h-screen bg-gray-50">
             @include('layouts.navigation')
 
+            @if (auth()->check() && ! auth()->user()->welcomed_at)
+                <x-welcome-tour />
+            @endif
+
             <!-- Page Heading -->
             @isset($header)
                 <header class="bg-white border-b border-gray-100 shadow-sm">
