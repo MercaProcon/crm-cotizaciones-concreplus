@@ -138,17 +138,13 @@
                     x-transition:leave-start="opacity-100"
                     x-transition:leave-end="opacity-0"
                 >
-                    <div
-                        class="welcome-tour-icon mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-procon-light"
-                        x-show="step === {{ $i }}"
-                        x-transition:enter="transition ease-[cubic-bezier(0.23,1,0.32,1)] duration-[320ms] delay-75"
-                        x-transition:enter-start="scale-50 opacity-0"
-                        x-transition:enter-end="scale-100 opacity-100"
-                    >
-                        <svg class="h-8 w-8 text-procon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            {!! $icons[$step['icon']] !!}
-                        </svg>
-                    </div>
+                    <template x-if="step === {{ $i }}">
+                        <div class="welcome-tour-icon-pop mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-procon-light">
+                            <svg class="h-8 w-8 text-procon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                {!! $icons[$step['icon']] !!}
+                            </svg>
+                        </div>
+                    </template>
                     <h2 class="text-base font-semibold text-gray-900 mb-2">
                         {{ $i === 0 ? __('¡Hola, :name!', ['name' => $user->name]) : $step['title'] }}
                     </h2>
