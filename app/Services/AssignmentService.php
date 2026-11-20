@@ -2,11 +2,14 @@
 
 namespace App\Services;
 
+use App\Mail\QuotationAssignedMail;
 use App\Models\ActivityLog;
 use App\Models\Assignment;
 use App\Models\Quotation;
 use App\Models\QuotationNotification;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 /**
  * Lógica de asignación compartida entre la asignación manual
@@ -33,7 +36,7 @@ class AssignmentService
             $currentAssignment->update(['is_current' => false]);
         }
 
-        Assignment::create([
+        $assignment = Assignment::create([
             'quotation_id' => $quotation->id,
             'assigned_by_user_id' => $assignedBy->id,
             'assigned_to_user_id' => $vendedora->id,
@@ -69,6 +72,21 @@ class AssignmentService
             ),
             'sent_at' => now(),
         ]);
+
+        // Fase 15: correo real además de la notificación in-app -- un fallo
+        // de envío (SMTP caido, etc.) nunca debe tumbar la asignación ni la
+        // importación que la dispara, solo se registra en el log.
+        try {
+            Mail::to($vendedora->email)->send(
+                new QuotationAssignedMail($quotation, $assignment, $isReassignment)
+            );
+        } catch (\Throwable $e) {
+            Log::warning('No se pudo enviar el correo de cotización asignada', [
+                'quotation_id' => $quotation->id,
+                'vendedora_id' => $vendedora->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     /**
