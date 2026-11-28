@@ -99,20 +99,26 @@
                                             </p>
                                         </td>
                                         <td class="sticky right-0 bg-white group-hover:bg-gray-50 px-4 py-3 align-top border-l border-gray-200">
-                                            <div class="flex items-center gap-2" x-data="{ copied: false }">
+                                            <div class="flex items-center gap-2 flex-wrap" x-data="{ copied: false, copiedMsg: false }">
                                                 <a href="{{ route('quotations.show', $quotation) }}"
                                                    class="inline-flex items-center px-2.5 py-1.5 rounded-md border border-gray-300 text-xs font-medium text-gray-700 hover:bg-gray-50 whitespace-nowrap">
                                                     {{ __('Ver detalle') }}
                                                 </a>
-                                                <a href="https://wa.me/52{{ $quotation->phone_normalized }}?text={{ rawurlencode($whatsappMessage) }}" target="_blank" rel="noopener"
+                                                <a href="https://wa.me/52{{ $quotation->phone_normalized }}?text={{ rawurlencode($whatsappMessage) }}" target="whatsapp-crm" rel="noopener"
                                                    class="inline-flex items-center px-2.5 py-1.5 rounded-md border border-green-300 text-xs font-medium text-green-700 hover:bg-green-50 whitespace-nowrap">
                                                     {{ __('WhatsApp') }}
                                                 </a>
                                                 <button type="button"
                                                         @click="navigator.clipboard.writeText('{{ $quotation->phone_normalized }}'); copied = true; setTimeout(() => copied = false, 1500)"
                                                         class="inline-flex items-center px-2.5 py-1.5 rounded-md border border-gray-300 text-xs font-medium text-gray-700 hover:bg-gray-50 whitespace-nowrap">
-                                                    <span x-show="! copied">{{ __('Copiar') }}</span>
+                                                    <span x-show="! copied">{{ __('Copiar número') }}</span>
                                                     <span x-show="copied">{{ __('¡Copiado!') }}</span>
+                                                </button>
+                                                <button type="button"
+                                                        @click="navigator.clipboard.writeText(@js($whatsappMessage)); copiedMsg = true; setTimeout(() => copiedMsg = false, 1500)"
+                                                        class="inline-flex items-center px-2.5 py-1.5 rounded-md border border-gray-300 text-xs font-medium text-gray-700 hover:bg-gray-50 whitespace-nowrap">
+                                                    <span x-show="! copiedMsg">{{ __('Copiar mensaje') }}</span>
+                                                    <span x-show="copiedMsg">{{ __('¡Copiado!') }}</span>
                                                 </button>
                                             </div>
                                         </td>
@@ -132,7 +138,7 @@
                                     '{folio}' => $quotation->folio,
                                 ]);
                             @endphp
-                            <div class="p-4" x-data="{ copied: false }">
+                            <div class="p-4" x-data="{ copied: false, copiedMsg: false }">
                                 <div class="flex items-start justify-between gap-3">
                                     <div class="font-medium text-gray-900">{{ $quotation->client_name }}</div>
                                     <x-status-badge class="shrink-0" :status="$quotation->crm_status" :label="$statusLabels[$quotation->crm_status] ?? null" />
@@ -157,15 +163,21 @@
                                        class="flex-1 min-w-[6rem] text-center inline-flex items-center justify-center px-2.5 py-2 rounded-md border border-gray-300 text-xs font-medium text-gray-700 hover:bg-gray-50">
                                         {{ __('Ver detalle') }}
                                     </a>
-                                    <a href="https://wa.me/52{{ $quotation->phone_normalized }}?text={{ rawurlencode($whatsappMessage) }}" target="_blank" rel="noopener"
+                                    <a href="https://wa.me/52{{ $quotation->phone_normalized }}?text={{ rawurlencode($whatsappMessage) }}" target="whatsapp-crm" rel="noopener"
                                        class="flex-1 min-w-[6rem] text-center inline-flex items-center justify-center px-2.5 py-2 rounded-md border border-green-300 text-xs font-medium text-green-700 hover:bg-green-50">
                                         {{ __('WhatsApp') }}
                                     </a>
                                     <button type="button"
                                             @click="navigator.clipboard.writeText('{{ $quotation->phone_normalized }}'); copied = true; setTimeout(() => copied = false, 1500)"
                                             class="flex-1 min-w-[6rem] text-center inline-flex items-center justify-center px-2.5 py-2 rounded-md border border-gray-300 text-xs font-medium text-gray-700 hover:bg-gray-50">
-                                        <span x-show="! copied">{{ __('Copiar') }}</span>
+                                        <span x-show="! copied">{{ __('Copiar número') }}</span>
                                         <span x-show="copied">{{ __('¡Copiado!') }}</span>
+                                    </button>
+                                    <button type="button"
+                                            @click="navigator.clipboard.writeText(@js($whatsappMessage)); copiedMsg = true; setTimeout(() => copiedMsg = false, 1500)"
+                                            class="flex-1 min-w-[6rem] text-center inline-flex items-center justify-center px-2.5 py-2 rounded-md border border-gray-300 text-xs font-medium text-gray-700 hover:bg-gray-50">
+                                        <span x-show="! copiedMsg">{{ __('Copiar mensaje') }}</span>
+                                        <span x-show="copiedMsg">{{ __('¡Copiado!') }}</span>
                                     </button>
                                 </div>
                             </div>
