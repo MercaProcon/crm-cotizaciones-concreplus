@@ -77,7 +77,7 @@ class FollowUpController extends Controller
                 'quotation_id' => $quotation->id,
                 'user_id' => $request->user()->id,
                 'status' => $statusChanged ? $newStatus : $oldStatus,
-                'comment' => $validated['comment'],
+                'comment' => $validated['comment'] ?? null,
             ]);
         });
 
