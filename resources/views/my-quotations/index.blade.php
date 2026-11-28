@@ -8,7 +8,7 @@
     @php
         // Plantilla única del mensaje de WhatsApp (máx. 2 emojis). Se rellena
         // por cotización en cada listado (desktop y móvil) más abajo.
-        $whatsappTemplate = "Hola {cliente}, buen día. Soy {vendedora} de Concreplus. 👷‍♀️\n\nGracias por contactarnos. Ya recibimos tu solicitud de cotización con folio {folio} y estamos revisando la información para prepararte una propuesta adecuada.\n\nEn breve te compartiremos tu cotización por este medio. Si requerimos algún dato adicional, te lo solicitaremos para poder atenderte mejor.\n\nQuedo atenta. ✅";
+        $whatsappTemplate = "Hola {cliente}, buen día. Soy {vendedora} de Concreplus. 👷\n\nGracias por contactarnos. Ya recibimos tu solicitud de cotización con folio {folio} y estamos revisando la información para prepararte una propuesta adecuada.\n\nEn breve te compartiremos tu cotización por este medio. Si requerimos algún dato adicional, te lo solicitaremos para poder atenderte mejor.\n\nQuedo atenta. ✅";
     @endphp
 
     <div class="py-12">
@@ -104,7 +104,7 @@
                                                    class="inline-flex items-center px-2.5 py-1.5 rounded-md border border-gray-300 text-xs font-medium text-gray-700 hover:bg-gray-50 whitespace-nowrap">
                                                     {{ __('Ver detalle') }}
                                                 </a>
-                                                <a href="https://wa.me/52{{ $quotation->phone_normalized }}?text={{ rawurlencode($whatsappMessage) }}" target="whatsapp-crm" rel="noopener"
+                                                <a href="https://web.whatsapp.com/send?phone=52{{ $quotation->phone_normalized }}&text={{ rawurlencode($whatsappMessage) }}" target="whatsapp-crm" rel="noopener"
                                                    class="inline-flex items-center px-2.5 py-1.5 rounded-md border border-green-300 text-xs font-medium text-green-700 hover:bg-green-50 whitespace-nowrap">
                                                     {{ __('WhatsApp') }}
                                                 </a>
@@ -163,7 +163,7 @@
                                        class="flex-1 min-w-[6rem] text-center inline-flex items-center justify-center px-2.5 py-2 rounded-md border border-gray-300 text-xs font-medium text-gray-700 hover:bg-gray-50">
                                         {{ __('Ver detalle') }}
                                     </a>
-                                    <a href="https://wa.me/52{{ $quotation->phone_normalized }}?text={{ rawurlencode($whatsappMessage) }}" target="whatsapp-crm" rel="noopener"
+                                    <a href="https://web.whatsapp.com/send?phone=52{{ $quotation->phone_normalized }}&text={{ rawurlencode($whatsappMessage) }}" target="whatsapp-crm" rel="noopener"
                                        class="flex-1 min-w-[6rem] text-center inline-flex items-center justify-center px-2.5 py-2 rounded-md border border-green-300 text-xs font-medium text-green-700 hover:bg-green-50">
                                         {{ __('WhatsApp') }}
                                     </a>
