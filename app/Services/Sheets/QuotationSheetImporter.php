@@ -191,6 +191,27 @@ class QuotationSheetImporter
                 ->where('client_name', $clientName)
                 ->first();
 
+        // Respaldo contra corrimiento de filas: si alguien borra o inserta
+        // filas arriba en la hoja (limpieza manual, por ejemplo), el
+        // source_row de una fila ya importada deja de coincidir en la
+        // siguiente corrida. El hash de abajo solo atrapa esto cuando el
+        // contenido es IDÉNTICO byte a byte; si además cambió algo de la
+        // fila (p.ej. alguien llenó "asignado a" a mano), el hash ya no
+        // coincide y sin este respaldo se crearía un duplicado completo
+        // (bug real detectado en produccion, Fase 15: 5 clientes
+        // duplicados tras una limpieza de filas viejas en Sheets). Mismo
+        // telefono + misma fecha + mismo nombre casi con certeza es la
+        // misma fila movida, no un contacto nuevo el mismo dia (un
+        // contacto nuevo real traeria un nombre distinto, como ya se vio
+        // con el caso Adriana Hernandez / Angel Enrique Poot).
+        if (! $existing && $isAmbiguous) {
+            $existing = Quotation::where('source_sheet', $tab)
+                ->where('phone_normalized', $phoneNormalized)
+                ->where('registered_at', $registeredAt->format('Y-m-d H:i:s'))
+                ->where('client_name', $clientName)
+                ->first();
+        }
+
         if ($existing) {
             if ($existing->source_hash === $sourceHash) {
                 return [
