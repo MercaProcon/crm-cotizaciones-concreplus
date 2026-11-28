@@ -26,7 +26,8 @@ class FollowUpController extends Controller
         abort_unless($quotation->canReceiveFollowUpFrom($request->user()), 403);
 
         $validated = $request->validate([
-            'comment' => ['required', 'string', 'max:2000'],
+            'quote_number' => ['required', 'string', 'max:255'],
+            'comment' => ['nullable', 'string', 'max:2000'],
             'crm_status' => ['nullable', Rule::in(Quotation::FOLLOW_UP_STATUSES)],
         ]);
 
@@ -36,7 +37,11 @@ class FollowUpController extends Controller
             $statusChanged = $newStatus !== null && $newStatus !== $oldStatus;
             $isFirstAttention = is_null($quotation->first_attention_at);
 
-            $updates = [];
+            $oldQuoteNumber = $quotation->quote_number;
+            $newQuoteNumber = $validated['quote_number'];
+            $quoteNumberChanged = $newQuoteNumber !== $oldQuoteNumber;
+
+            $updates = ['quote_number' => $newQuoteNumber];
 
             if ($statusChanged) {
                 $updates['crm_status'] = $newStatus;
@@ -46,9 +51,7 @@ class FollowUpController extends Controller
                 $updates['first_attention_at'] = now();
             }
 
-            if ($updates !== []) {
-                $quotation->update($updates);
-            }
+            $quotation->update($updates);
 
             if ($statusChanged) {
                 ActivityLog::create([
@@ -57,6 +60,16 @@ class FollowUpController extends Controller
                     'action' => 'status_changed',
                     'old_value' => QuotationController::STATUS_LABELS[$oldStatus] ?? $oldStatus,
                     'new_value' => QuotationController::STATUS_LABELS[$newStatus] ?? $newStatus,
+                ]);
+            }
+
+            if ($quoteNumberChanged) {
+                ActivityLog::create([
+                    'quotation_id' => $quotation->id,
+                    'user_id' => $request->user()->id,
+                    'action' => 'quote_number_changed',
+                    'old_value' => $oldQuoteNumber,
+                    'new_value' => $newQuoteNumber,
                 ]);
             }
 

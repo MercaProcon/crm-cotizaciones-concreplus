@@ -123,11 +123,32 @@
                 <h3 class="font-semibold text-gray-800 mb-4">{{ __('Seguimiento') }}</h3>
 
                 @if ($canAddFollowUp)
+                    @php
+                        $priorQuoteNumbers = $phoneHistory->pluck('quote_number')->filter()->unique()->values();
+                    @endphp
                     <form method="POST" action="{{ route('follow-ups.store', $quotation) }}" class="space-y-3 mb-6">
                         @csrf
                         <div>
-                            <label for="comment" class="block text-sm font-medium text-gray-700">{{ __('Comentario') }}</label>
-                            <textarea name="comment" id="comment" rows="2" required
+                            <label for="quote_number" class="block text-sm font-medium text-gray-700">{{ __('Folio de la cotización') }}</label>
+                            <input type="text" name="quote_number" id="quote_number" required
+                                   list="quote-numbers-cliente"
+                                   value="{{ old('quote_number', $quotation->quote_number) }}"
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-procon focus:ring-procon text-sm"
+                                   placeholder="{{ __('Ej. 4023C') }}">
+                            @if ($priorQuoteNumbers->isNotEmpty())
+                                <datalist id="quote-numbers-cliente">
+                                    @foreach ($priorQuoteNumbers as $priorQuoteNumber)
+                                        <option value="{{ $priorQuoteNumber }}"></option>
+                                    @endforeach
+                                </datalist>
+                                <p class="mt-1 text-xs text-gray-500">
+                                    {{ __('Este cliente ya tiene folio(s) previo(s): :folios. Puedes reutilizar uno si es la misma cotización.', ['folios' => $priorQuoteNumbers->implode(', ')]) }}
+                                </p>
+                            @endif
+                        </div>
+                        <div>
+                            <label for="comment" class="block text-sm font-medium text-gray-700">{{ __('Comentario (opcional)') }}</label>
+                            <textarea name="comment" id="comment" rows="2"
                                       class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-procon focus:ring-procon text-sm"
                                       placeholder="{{ __('¿Qué pasó con esta cotización?') }}"></textarea>
                         </div>
