@@ -84,6 +84,9 @@
                                             <div class="font-medium text-gray-900">{{ $quotation->client_name }}</div>
                                             <div class="text-xs text-gray-400 mt-0.5">
                                                 {{ $quotation->folio }} · {{ $quotation->registered_at->format('d/m/Y') }}
+                                                @if ($quotation->quote_number)
+                                                    · {{ __('Folio cotización:') }} <span class="text-gray-600 font-medium">{{ $quotation->quote_number }}</span>
+                                                @endif
                                             </div>
                                         </td>
                                         <td class="px-4 py-3 whitespace-nowrap text-gray-600 align-top">{{ $quotation->phone_raw }}</td>
@@ -136,6 +139,9 @@
                                 </div>
                                 <div class="text-xs text-gray-400 mt-0.5">
                                     {{ $quotation->folio }} · {{ $quotation->registered_at->format('d/m/Y') }}
+                                    @if ($quotation->quote_number)
+                                        · {{ __('Folio cotización:') }} <span class="text-gray-600 font-medium">{{ $quotation->quote_number }}</span>
+                                    @endif
                                 </div>
 
                                 <div class="mt-2 text-sm text-gray-600">

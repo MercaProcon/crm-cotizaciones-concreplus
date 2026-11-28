@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
     'quotation_id',
     'user_id',
     'status',
+    'quote_number',
     'comment',
 ])]
 class FollowUp extends Model

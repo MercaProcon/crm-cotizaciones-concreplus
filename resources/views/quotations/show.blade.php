@@ -176,8 +176,11 @@
                                     <span class="font-medium text-gray-900">{{ $followUp->user?->name ?? __('Usuario eliminado') }}</span>
                                     <span class="text-gray-400">{{ $followUp->created_at->format('d/m/Y H:i') }}</span>
                                 </div>
-                                <div class="text-gray-600">
+                                <div class="text-gray-600 flex items-center gap-2 flex-wrap">
                                     <x-status-badge :status="$followUp->status" :label="$statusLabels[$followUp->status] ?? null" />
+                                    @if ($followUp->quote_number)
+                                        <span class="text-xs text-gray-500">{{ __('Folio:') }} <span class="font-medium text-gray-700">{{ $followUp->quote_number }}</span></span>
+                                    @endif
                                 </div>
                                 @if ($followUp->comment)
                                     <p class="text-gray-700 mt-1">{{ $followUp->comment }}</p>

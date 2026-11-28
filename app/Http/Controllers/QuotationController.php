@@ -60,7 +60,8 @@ class QuotationController extends Controller
                         ->orWhere('phone_raw', 'like', "%{$term}%")
                         ->orWhere('phone_normalized', 'like', "%{$term}%")
                         ->orWhere('sheet_assigned_to', 'like', "%{$term}%")
-                        ->orWhere('description', 'like', "%{$term}%");
+                        ->orWhere('description', 'like', "%{$term}%")
+                        ->orWhere('quote_number', 'like', "%{$term}%");
                 });
             }
 
